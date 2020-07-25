@@ -1,0 +1,40 @@
+# Top of the Puppetfile
+# This is a top block comment
+# It's considered a top block comment because it's at the top
+# and a block of comments.
+# It should always stay at the top through the sorting process
+
+# @maintainer: mod3team@fake.com
+mod 'mod3',
+  :git => 'https://fake.com/group/module3',
+  :tag => 'v1',
+
+# Comment (mod4)
+mod 'mod4',
+  :git => 'https://fake.com/group/module4',
+  :ref => 'production',
+  :default_branch => 'master',
+
+# @critical:
+# @maintainer: mod1team@fake.com (mod1)
+mod 'mod1'
+
+# @critical:
+mod 'mod5',
+  'v1.0.0'
+
+# @maintainer: mod2team@fake.com
+mod 'mod2',
+  :latest
+
+# More comments (mod6)
+mod 'mod6',
+  'v1.0.0'
+
+mod 'mod1a', :latest
+
+mod 'mod5b', 'v1.5.2'
+
+mod 'mod9a'
+
+# Bottom of the Puppetfile
