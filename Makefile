@@ -1,46 +1,87 @@
 MAIN := main.go
+PUFCTLVER := 0.0.0
+DATE := $(shell date --iso)
 BINARY := pufctl
-EXE := pufctl.exe
+LINUX := linux
+DARWIN := darwin
+WINDOWS := windows
 ARCH := amd64
-NIXBIN := bin/linux/${BINARY}
-DARBIN := bin/darwin/${BINARY}
-WINBIN := bin/windows/${EXE}
-NIXBUILD := GOOS=linux GOARCH=${ARCH} go build -o ${NIXBIN} ${MAIN}
-DARBUILD := GOOS=darwin GOARCH=${ARCH} go build -o ${DARBIN} ${MAIN}
-WINBUILD := GOOS=windows GOARCH=${ARCH} go build -o ${WINBIN} ${MAIN}
-NIXCLEAN := [ -f ${NIXBIN} ] && rm -f ${NIXBIN} || echo "No file to delete."
-DARCLEAN := [ -f ${DARBIN} ] && rm -f ${DARBIN} || echo "No file to delete."
-WINCLEAN := [ -f ${WINBIN} ] && rm -f ${WINBIN} || echo "No file to delete."
+GOARCH := GOARCH=${ARCH}
+GOOS := GOOS=
+BUILDCMD := go build
+PUFCTLPKG := github.com/hsnodgrass/pufctl/internal
+
+define quickbuildcmd
+	echo "Performing $(1) quick build..."
+	${GOOS}$(1) ${GOARCH} ${BUILDCMD} -o bin/$(1)/$(2) ${MAIN}
+endef
+
+define cleancmd
+	echo "Deleting $(1) binaries..."
+	rm -rf bin/$(1)/*
+endef
+
+define releasecmd
+	echo "Compiling pufctl version ${PUFCTLVER} release binary for $(1)..."
+	mkdir -p release/$(1)/
+	${GOOS}$(1) ${GOARCH} ${BUILDCMD} \
+	-ldflags="-X '${PUFCTLPKG}/version.Ver=${PUFCTLVER}' -X '${PUFCTLPKG}/version.OS=$(1)' -X '${PUFCTLPKG}/version.Arch=${ARCH}' -X '${PUFCTLPKG}/version.Time=$(3)'" \
+	-o release/$(1)/$(2) ${MAIN}
+endef
+
+define checksumcmd
+	echo "Creating sha256 checksum for release binary $(2)..."
+	$(shell sha256sum release/$(1)/$(2) > release/$(1)/sha256checksum.txt)
+endef
+
 
 build: nixbuild darbuild winbuild
 
 nixbuild:
-	@echo "Performing linux quick build..." 
-	@$(NIXBUILD)
+	@$(call quickbuildcmd,${LINUX},${BINARY})
 
 darbuild:
-	@echo "Performing darwin quick build..."
-	@$(DARBUILD)
+	@$(call quickbuildcmd,${DARWIN},${BINARY})
 
 winbuild:
-	@echo "Performing windows quick build..."
-	@$(WINBUILD)
+	@$(call quickbuildcmd,${WINDOWS},${BINARY}.exe)
 
 clean: nixclean darclean winclean
 
 nixclean:
-	@echo "Deleting linux binary..."
-	@$(NIXCLEAN)
+	@$(call cleancmd,${LINUX})
 
 darclean:
-	@echo "Deleting darwin binary..."
-	@$(DARCLEAN)
+	@$(call cleancmd,${DARWIN})
 
 winclean:
-	@echo "Deleting windows exe..."
-	@$(WINCLEAN)
+	@$(call cleancmd,${WINDOWS})
 
 run:
 	@go run ${MAIN}
-	
+
+checksum: nixchecksum darchecksum winchecksum
+
+nixchecksum:
+	@$(call checksumcmd,${LINUX},${BINARY})
+
+darchecksum:
+	@$(call checksumcmd,${DARWIN},${BINARY})
+
+winchecksum:
+	@$(call checksumcmd,${WINDOWS},${BINARY}.exe)
+
+sign:
+	gon -log-level=info ./gon.json
+
+release: nixrelease darrelease winrelease checksum
+
+nixrelease:
+	@$(call releasecmd,${LINUX},${BINARY},$(DATE))
+
+darrelease:
+	@$(call releasecmd,${DARWIN},${BINARY},$(DATE))
+
+winrelease:
+	@$(call releasecmd,${WINDOWS},${BINARY}.exe,$(DATE))
 

@@ -1,0 +1,32 @@
+# Top of the Puppetfile
+# This is a top block comment
+# It's considered a top block comment because it's at the top
+# and a block of comments.
+# It should always stay at the top through the sorting process
+
+mod 'camptocamp-kmod',
+  '2.5.0'
+
+mod 'herculesteam-augeasproviders_core',
+  '2.6.0'
+
+mod 'herculesteam-augeasproviders_sysctl',
+  '2.5.0'
+
+mod 'puppet-archive',
+  '4.5.0'
+
+mod 'puppetlabs-apt',
+  '7.5.0'
+
+mod 'puppetlabs-kubernetes',
+  '5.1.0'
+
+mod 'puppetlabs-stdlib',
+  '6.3.0'
+
+mod 'puppetlabs-translate',
+  '2.2.0'
+
+
+# Bottom of the Puppetfile

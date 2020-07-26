@@ -1,0 +1,97 @@
+name: build and sign binaries
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build the binaries
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        run: |
+          make release PUFCTLVER=$(echo $GITHUB_REF | sed 's/refs\/tags\///g')
+      - name: upload binary artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: binaries
+          path: release/
+  release:
+    needs: build
+    runs-on: macos-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Download-Binaries
+      uses: actions/download-artifact@v2
+      with:
+        name: binaries
+        path: release/
+
+    - name: Import Code-Signing Certificates
+      uses: Apple-Actions/import-codesign-certs@v1
+      with:
+        # The certificates in a PKCS12 file encoded as a base64 string
+        p12-file-base64: ${{ secrets.APPLE_DEVELOPER_CERT_P12_BASE64 }}
+        # The password used to import the PKCS12 file.
+        p12-password: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}
+
+    - name: Install gon via HomeBrew for code signing and app notarization
+      run: |
+        brew tap mitchellh/gon
+        brew install mitchellh/gon/gon
+    - name: Sign the mac binaries with Gon
+      env:
+        AC_USERNAME: ${{ secrets.AC_USERNAME }}
+        AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+      run: |
+        make sign
+    - name: Zip up release directories
+      run: |
+        zip -r pufctl-linux.zip release/linux/ && zip -r pufctl-macos.zip release/darwin/ && zip -r pufctl-windows.zip release/windows/
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload linux release
+      id: upload-linux-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: pufctl-linux.zip
+        asset_name: pufctl-linux.zip
+        asset_content_type: application/zip
+    - name: Upload MacOS release
+      id: upload-macos-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: pufctl-macos.zip
+        asset_name: pufctl-macos.zip
+        asset_content_type: application/zip
+    - name: Upload Windows release
+      id: upload-windows-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: pufctl-windows.zip
+        asset_name: pufctl-windows.zip
+        asset_content_type: application/zip

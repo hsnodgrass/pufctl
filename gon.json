@@ -1,0 +1,17 @@
+{
+    "source" : ["./release/darwin/pufctl"],
+    "bundle_id" : "com.hsnodgrass3.pufctl",
+    "apple_id": {
+        "password":  "@env:AC_PASSWORD"
+    },
+    "sign" :{
+        "application_identity" : "9D2023F6A20CE7330113374CD2E7481BD7159586"
+    },
+    "dmg" :{
+        "output_path":  "./release/darwin/pufctl.dmg",
+        "volume_name":  "pufctl"
+    },
+    "zip" :{
+        "output_path" : "./release/darwin/pufctl.zip"
+    }
+}
