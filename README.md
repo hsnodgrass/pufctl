@@ -10,7 +10,11 @@ Pufctl allows you to quickly add modules to a Puppetfile from a git source or th
 
 ## Quickstart
 
-Download the appropriate binary for your operating system [here](https://github.com/hsnodgrass/pufctl/releases), put the binary somewhere in your $PATH, and run `pufctl --help` (`pufctl.exe --help` on Windows).
+* Download the appropriate zip file for your operating system [here](https://github.com/hsnodgrass/pufctl/releases)
+* Unzip the file (`unzip` on *nix, 7zip or WinRar on Windows)
+    * (optional) Validate the checksum of the binary (`pufctl` or `pufctl.exe`) with `sha256sum`. The correct checksum is located in the file `sha256checksum.txt`
+* Move the binary to somewhere in your `$PATH`
+* Run `pufctl --help` (`pufctl.exe --help` on Windows)
 
 ## Table of Contents
 
