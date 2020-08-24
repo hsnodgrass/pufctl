@@ -35,7 +35,7 @@ Pufctl allows you to quickly add modules to a Puppetfile from a git source or th
 
 ### Command Overview
 
-See [the docs](https://github.com/hsnodgrass/pufctl/doc/pufctl.md) for full documentation.
+See [the docs](https://github.com/hsnodgrass/pufctl/blob/main/doc/pufctl.md) for full documentation.
 
 * `pufctl help` - Shows the help for any command. You can also use the `--help` (`-h`) flag.
 * `pufctl add` - Adds new content to the specified Puppetfile
