@@ -20,6 +20,7 @@ var (
 		MaxIdleConns:       3,
 		IdleConnTimeout:    5 * time.Second,
 		DisableCompression: true,
+		Proxy:              http.ProxyFromEnvironment,
 	}
 )
 

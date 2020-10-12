@@ -23,6 +23,7 @@ Pufctl allows you to quickly add modules to a Puppetfile from a git source or th
     * [Working With Puppetfiles](#working-with-puppetfiles)
     * [Git and Authentication](#git-and-authentication)
     * [Using a Config File](#using-a-config-file)
+    * [Proxy Settings](#proxy-settings)
 * [Features](#features)
 * [Usage](#usage)
     * [Basic Examples](#basic-examples)
@@ -88,6 +89,13 @@ Nearly every option provided by a command line flag can be configured using a co
 
 The default location for the config file is `$HOME/.pufctl.yaml`. You can use a config file at a different path by passing the path to the `--config` global flag.
 
+### Proxy Settings
+
+If you are behind a proxy, so can configure Pufctl to use the proxy by settings the following environment variables:
+
+* `HTTP_PROXY`
+* `HTTPS_PROXY`
+* `USE_PROXIES` (optional)
 
 ## Features
 

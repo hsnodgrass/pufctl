@@ -20,7 +20,7 @@ type GetError struct {
 }
 
 func (r *GetError) Error() string {
-	return fmt.Sprintf("%s HTTP GET request failed. URL: %s, Headers: %#v, Error: %#v", prefix(), r.URL, r.Headers, r.Err)
+	return fmt.Sprintf("%s HTTP GET request failed. URL: %s, Headers: %#v, Error: %s", prefix(), r.URL, r.Headers, r.Err.Error())
 }
 
 // GetNon200Error provides an error wrapper for when
@@ -41,7 +41,7 @@ type JSONDecodeError struct {
 }
 
 func (r *JSONDecodeError) Error() string {
-	return fmt.Sprintf("%s Failed to decode HTTP response body: %#v", prefix(), r.Err)
+	return fmt.Sprintf("%s Failed to decode HTTP response body: %#v", prefix(), r.Err.Error())
 }
 
 // FetchError provides a wrapper for errors encountered
@@ -51,7 +51,7 @@ type FetchError struct {
 }
 
 func (r *FetchError) Error() string {
-	return fmt.Sprintf("%s Fetch failed: %#v", prefix(), r.Err)
+	return fmt.Sprintf("%s Fetch failed: %#v", prefix(), r.Err.Error())
 }
 
 // ListError provides a wrapper for errors encountered
@@ -61,5 +61,5 @@ type ListError struct {
 }
 
 func (r *ListError) Error() string {
-	return fmt.Sprintf("%s List failed: %#v", prefix(), r.Err)
+	return fmt.Sprintf("%s List failed: %#v", prefix(), r.Err.Error())
 }
